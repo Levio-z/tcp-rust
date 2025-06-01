@@ -1,0 +1,7 @@
+[package]
+name = "tcp-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tun-tap = "0.1.4"
