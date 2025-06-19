@@ -1,8 +1,18 @@
 #!/bin/bash
-set -e  # 遇错立即退出，避免执行错误后继续
-
+# 测试./run.sh
+# nc 192.168.0.2 80 使用nc发起TCP连接
+# 
+# 停止 pkill -f run.sh
+#
 # 只编译不运行
 cargo build --release
+
+ext=$?           # 保存上一个命令的退出码
+echo "Exit code: $ext"
+
+if [[ $ext != 0 ]]; then
+    exit $ext    # 如果失败，以相同状态码退出
+fi
 
 # 只需第一次运行时执行，后续可注释
 sudo setcap cap_net_admin=+ep target/release/tcp-rust
@@ -29,6 +39,7 @@ while ! ip link show tun0 > /dev/null 2>&1; do
   sleep 0.1
 done
 
+sudo sysctl -w net.ipv6.conf.tun0.disable_ipv6=1
 
 
 
@@ -36,6 +47,8 @@ done
 sudo ip addr add 192.168.0.1/24 dev tun0
 sudo ip link set dev tun0 up
 
+# 捕获 TERM 信号，终止后台进程
+trap "kill $pid" TERM
 
 # 脚本运行完毕，后台程序继续执行
 echo ""
