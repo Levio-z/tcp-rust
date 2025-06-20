@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
 use std::ops::Sub;
+use std::collections::VecDeque;
 
 pub enum State {
     //Closed,
@@ -17,6 +18,8 @@ pub struct Connection {
     recv: RecvSequenceSpace,
     ip: etherparse::Ipv4Header,
     tcp: etherparse::TcpHeader,
+    pub(crate) incoming: VecDeque<u8>,
+    pub(crate) unacked: VecDeque<u8>,
 }
 /// State of the Send Sequence Space (RFC 793 S3.2 F4)
 ///
@@ -116,6 +119,8 @@ impl Connection {
                 iph.source(),
             )
             .unwrap(),
+            incoming: Default::default(),
+            unacked: Default::default(),
         };
         // need to start establishing a connectionAdd commentMore actions
         c.tcp.syn = true;

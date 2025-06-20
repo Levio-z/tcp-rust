@@ -6,3 +6,8 @@ edition = "2024"
 [dependencies]
 etherparse = "0.18.0"
 tun-tap = "0.1.4"
+[lib]
+path = "src/lib.rs"
+[[bin]]
+name="bin"
+path = "src/bin.rs"
